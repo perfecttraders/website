@@ -1,6 +1,5 @@
 import GlassCard from '../components/GlassCard'
 import SectionHeading from '../components/SectionHeading'
-import Seo from '../components/Seo'
 
 const plans = [
   { name: 'Basic', spread: 'From 1.4 pips', leverage: 'Up to 1:200', support: 'Standard', signals: 'Weekly' },
@@ -11,7 +10,6 @@ const plans = [
 function PricingPage() {
   return (
     <div className="space-y-8">
-      <Seo title="Pricing" description="Compare Perfect Traders account plans: Basic, Pro, and VIP with transparent features and benefits." />
       <SectionHeading title="Account plans tailored to your trading style" subtitle="Choose the right setup for your volume, strategy, and support requirements." />
       <div className="grid gap-5 md:grid-cols-3">
         {plans.map((plan) => (

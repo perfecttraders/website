@@ -1,12 +1,10 @@
 import GlassCard from '../components/GlassCard'
 import SectionHeading from '../components/SectionHeading'
-import Seo from '../components/Seo'
 import { SITE } from '../data/siteData'
 
 function ContactPage() {
   return (
     <div className="space-y-8">
-      <Seo title="Contact" description="Contact Perfect Traders support for onboarding, account help, and trading assistance." />
       <SectionHeading title="Contact Perfect Traders" subtitle="Our support and onboarding teams are available to help you get started and scale effectively." />
       <div className="grid gap-5 lg:grid-cols-2">
         <GlassCard>

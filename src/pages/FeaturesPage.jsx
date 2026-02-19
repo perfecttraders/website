@@ -1,6 +1,5 @@
 import GlassCard from '../components/GlassCard'
 import SectionHeading from '../components/SectionHeading'
-import Seo from '../components/Seo'
 
 const featureList = [
   { title: 'Fast Execution', desc: 'Ultra-low latency trade routing ensures your strategies are executed with precision and speed.' },
@@ -13,7 +12,6 @@ const featureList = [
 function FeaturesPage() {
   return (
     <div>
-      <Seo title="Features" description="Explore Perfect Traders platform features: fast execution, secure trading, advanced tools, signals, and account management." />
       <SectionHeading title="A complete trading stack for market professionals" subtitle="Every feature is designed to improve confidence, control, and execution quality." />
       <div className="grid gap-5 md:grid-cols-2">
         {featureList.map((item) => (

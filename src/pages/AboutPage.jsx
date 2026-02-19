@@ -1,11 +1,9 @@
 import GlassCard from '../components/GlassCard'
 import SectionHeading from '../components/SectionHeading'
-import Seo from '../components/Seo'
 
 function AboutPage() {
   return (
     <div className="space-y-10">
-      <Seo title="About" description="Learn about Perfect Traders, our mission, vision, and the trading community we are building." />
       <SectionHeading
         title="Built for modern traders who expect more"
         subtitle="Perfect Traders delivers a premium brokerage experience with transparent operations, robust technology, and a trader-first philosophy."

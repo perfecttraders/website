@@ -1,6 +1,5 @@
 import GlassCard from '../components/GlassCard'
 import SectionHeading from '../components/SectionHeading'
-import Seo from '../components/Seo'
 import { SITE, STATS } from '../data/siteData'
 
 const reasons = [
@@ -12,10 +11,6 @@ const reasons = [
 function HomePage() {
   return (
     <div className="space-y-14">
-      <Seo
-        title="Home"
-        description="Perfect Traders is a premium forex broker with fast execution, secure trading infrastructure, and advanced market tools."
-      />
       <section className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
         <div>
           <p className="mb-3 inline-flex rounded-full border border-accentBlue/50 bg-accentBlue/10 px-3 py-1 text-xs uppercase tracking-[0.25em] text-accentBlue">
