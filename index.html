@@ -988,37 +988,8 @@
         </div>
       </section>
 
-<!-- SIGNALS SCREEN -->
-<section class="screen" id="screen-signals">
-  <div class="screen-title-row">
-    <div>
-      <div class="screen-title">Trading Signals</div>
-      <div class="screen-subtitle">Live trading signals from Perfect Traders.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-  <div class="card-title">Active Signals</div>
-  <button class="btn btn-soft btn-sm" id="btnAddSignal">Add</button>
-</div>
-
-    <div id="signalsList" class="signal-list">
-      <div class="signal-item">
-        <div>
-          <div class="signal-symbol">No signals yet</div>
-          <div style="font-size:11px;color:var(--text-muted);">
-            Signals will appear here
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ACCOUNT SCREEN -->
-<section class="screen" id="screen-account">
-
+      <!-- ACCOUNT SCREEN -->
+      <section class="screen" id="screen-account">
         <div class="screen-title-row">
           <div>
             <div class="screen-title">Account</div>
@@ -1159,10 +1130,10 @@
         <div class="nav-item-icon">📈</div>
         <div>Trade</div>
       </div>
-      <div class="nav-item" data-screen="signals">
-  <div class="nav-item-icon">📡</div>
-  <div>Signals</div>
-</div>
+      <div class="nav-item" data-screen="wallet">
+        <div class="nav-item-icon">💼</div>
+        <div>Wallet</div>
+      </div>
       <div class="nav-item" data-screen="account">
         <div class="nav-item-icon">👤</div>
         <div>Account</div>
@@ -1253,14 +1224,13 @@
 
     // UI MODULE
     const UI = (function () {
-     const screens = {
-  dashboard: document.getElementById("screen-dashboard"),
-  trade: document.getElementById("screen-trade"),
-  wallet: document.getElementById("screen-wallet"),
-  signals: document.getElementById("screen-signals"),
-  account: document.getElementById("screen-account"),
-  settings: document.getElementById("screen-settings")
-};
+      const screens = {
+        dashboard: document.getElementById("screen-dashboard"),
+        trade: document.getElementById("screen-trade"),
+        wallet: document.getElementById("screen-wallet"),
+        account: document.getElementById("screen-account"),
+        settings: document.getElementById("screen-settings")
+      };
 
       function switchScreen(name) {
         Object.keys(screens).forEach((key) => {
@@ -1438,91 +1408,29 @@
       }
 
       function initAccountActions() {
-  const resetDemoBtn = document.getElementById("btnResetDemo");
-  if (resetDemoBtn) {
-    resetDemoBtn.addEventListener("click", () => {
-      AppState.balances.demo = 10000;
-      AppState.accountMode = "demo";
-      updateAccountUI();
-      TelegramApp.showAlert("Demo balance reset to $10,000.");
-    });
-  }
-}
+        const resetDemoBtn = document.getElementById("btnResetDemo");
+        if (resetDemoBtn) {
+          resetDemoBtn.addEventListener("click", () => {
+            AppState.balances.demo = 10000;
+            AppState.accountMode = "demo";
+            updateAccountUI();
+            TelegramApp.showAlert("Demo balance reset to $10,000.");
+          });
+        }
+      }
 
-/* ✅ PASTE HERE — BELOW initAccountActions */
-function initSignals() {
-  const btn = document.getElementById("btnAddSignal");
-  const list = document.getElementById("signalsList");
-  if (!btn || !list) return;
-
-  // Load saved signals
-  let signals = JSON.parse(localStorage.getItem("signals") || "[]");
-
-  function renderSignals() {
-    list.innerHTML = "";
-
-    if (signals.length === 0) {
-      list.innerHTML = `
-        <div class="signal-item">
-          <div>
-            <div class="signal-symbol">No signals yet</div>
-            <div style="font-size:11px;color:var(--text-muted);">
-              Signals will appear here
-            </div>
-          </div>
-        </div>
-      `;
-      return;
-    }
-
-    signals.forEach(sig => {
-      const item = document.createElement("div");
-      item.className = "signal-item";
-      item.innerHTML = `
-        <div>
-          <div class="signal-symbol">${sig.symbol}</div>
-          <div style="font-size:11px;color:var(--text-muted);">Manual signal</div>
-        </div>
-        <div class="signal-side">${sig.side}</div>
-      `;
-      list.appendChild(item);
-    });
-  }
-
-  // First render
-  renderSignals();
-
-  // Add new signal
-  btn.addEventListener("click", () => {
-    const symbol = prompt("Symbol (example XAUUSD)");
-    if (!symbol) return;
-
-    const side = prompt("BUY or SELL");
-    if (!side) return;
-
-    signals.unshift({
-      symbol: symbol.toUpperCase(),
-      side: side.toUpperCase()
-    });
-
-    localStorage.setItem("signals", JSON.stringify(signals));
-    renderSignals();
-  });
-}
-/* your existing code continues */
-function animateChart() {
-  const line = document.getElementById("chartLine");
-  if (!line) return;
-
-  let offset = 0;
-  function step() {
-    offset += 0.4;
-    line.style.transform =
-      "translateX(" + Math.sin(offset / 20) * 6 + "px)";
-    requestAnimationFrame(step);
-  }
-  step();
-}
+      function animateChart() {
+        const line = document.getElementById("chartLine");
+        if (!line) return;
+        let offset = 0;
+        function step() {
+          offset += 0.4;
+          line.style.transform =
+            "translateX(" + Math.sin(offset / 20) * 6 + "px)";
+          requestAnimationFrame(step);
+        }
+        step();
+      }
 
       function init() {
         initNav();
@@ -1531,7 +1439,6 @@ function animateChart() {
         initOrderButtons();
         initWalletButtons();
         initAccountActions();
-        initSignals();
         updateAccountUI();
         animateChart();
       }
