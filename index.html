@@ -1,1459 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Perfect Traders – Telegram Mini App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Telegram WebApp SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg-main: #0b0b0b;
-      --bg-elevated: #111111;
-      --bg-card: #151515;
-      --bg-soft: #1b1b1b;
-      --accent: #ff2d2d;
-      --accent-soft: rgba(255, 45, 45, 0.16);
-      --text-main: #ffffff;
-      --text-muted: #a0a0a0;
-      --border-subtle: #262626;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-pill: 999px;
-      --shadow-soft: 0 14px 40px rgba(0, 0, 0, 0.9);
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.25s ease-out;
-      --nav-height: 64px;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      background: var(--bg-main);
-      color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", Roboto, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font-family: inherit;
-    }
-
-    /* LAYOUT */
-
-    .app {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #181818 0, #050505 55%);
-    }
-
-    .app-header {
-      padding: 10px 16px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: linear-gradient(to bottom, #050505, rgba(5, 5, 5, 0.85));
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 12px;
-      background:
-        radial-gradient(circle at 20% 0, #ffffff, #ffb3b3 30%, transparent 60%),
-        radial-gradient(circle at 80% 100%, #ff2d2d, #7a0000 60%);
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.08),
-        0 10px 26px rgba(0, 0, 0, 0.9),
-        0 0 26px rgba(255, 45, 45, 0.55);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .brand-logo-inner {
-      width: 22px;
-      height: 22px;
-      border-radius: 9px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.08);
-    }
-
-    .brand-logo-mark {
-      font-weight: 800;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #ffffff, #ffb3b3);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .brand-logo-candle {
-      position: absolute;
-      right: 5px;
-      bottom: 3px;
-      width: 5px;
-      height: 14px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, #ffffff, #ff2d2d);
-      box-shadow: 0 0 10px rgba(255, 45, 45, 0.8);
-      transform: skewX(-6deg);
-    }
-
-    .brand-logo-candle::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: -5px;
-      width: 2px;
-      height: 5px;
-      border-radius: 999px;
-      background: #ffffff;
-      opacity: 0.9;
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand-name {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .brand-tagline {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-    }
-
-    .app-header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .pill {
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(0, 0, 0, 0.8);
-      font-size: 11px;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #00d26a;
-      box-shadow: 0 0 0 4px rgba(0, 210, 106, 0.18);
-    }
-
-    .app-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 10px 12px 70px;
-      gap: 10px;
-    }
-
-    .screen {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    .screen-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .screen-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .screen-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* CARDS */
-
-    .card {
-      border-radius: var(--radius-lg);
-      background: radial-gradient(circle at top left, rgba(255, 45, 45, 0.12), #151515);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 12px 12px 10px;
-      box-shadow: var(--shadow-soft);
-      position: relative;
-      overflow: hidden;
-      transition: transform var(--transition-med), box-shadow var(--transition-med),
-        border-color var(--transition-med), background var(--transition-med);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at 0 0, rgba(255, 45, 45, 0.18), transparent 55%);
-      opacity: 0;
-      transition: opacity var(--transition-med), transform var(--transition-med);
-      transform: translate3d(-10px, -10px, 0);
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.16);
-      background: radial-gradient(circle at top left, rgba(255, 45, 45, 0.18), #151515);
-    }
-
-    .card:hover::before {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .card-value {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .card-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .card-tag {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(0, 0, 0, 0.8);
-      color: var(--text-muted);
-    }
-
-    .card-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .card-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    /* BUTTONS */
-
-    .btn {
-      border-radius: var(--radius-pill);
-      border: 1px solid transparent;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-main);
-      transition: background var(--transition-med), border-color var(--transition-med),
-        transform var(--transition-fast), box-shadow var(--transition-fast),
-        color var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #ff2d2d, #ffffff);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 26px rgba(255, 45, 45, 0.5);
-      color: #000000;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 32px rgba(255, 45, 45, 0.65);
-    }
-
-    .btn-outline {
-      border-color: rgba(255, 255, 255, 0.18);
-      background: rgba(0, 0, 0, 0.7);
-      color: var(--text-muted);
-    }
-
-    .btn-outline:hover {
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.4);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .btn-soft {
-      border-color: rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text-main);
-    }
-
-    .btn-soft:hover {
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 11px;
-    }
-
-    /* TOGGLES / SWITCHES */
-
-    .toggle-group {
-      display: inline-flex;
-      padding: 3px;
-      border-radius: var(--radius-pill);
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      gap: 3px;
-    }
-
-    .toggle-option {
-      padding: 5px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-    }
-
-    .toggle-option.active {
-      background: var(--accent);
-      color: #000000;
-    }
-
-    /* DASHBOARD */
-
-    .balance-main {
-      font-size: 22px;
-      font-weight: 600;
-    }
-
-    .balance-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .balance-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .pill-small {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(0, 0, 0, 0.8);
-    }
-
-    .pnl-positive {
-      color: #00d26a;
-    }
-
-    .pnl-negative {
-      color: #ff4b4b;
-    }
-
-    /* TRADING SECTION */
-
-    .symbol-list {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .symbol-chip {
-      flex: 0 0 auto;
-      padding: 6px 10px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(0, 0, 0, 0.8);
-      font-size: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        border-color var(--transition-fast);
-    }
-
-    .symbol-chip.active {
-      background: var(--accent);
-      color: #000000;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .symbol-price {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .chart-placeholder {
-      border-radius: var(--radius-lg);
-      background: radial-gradient(circle at top, #202020, #101010);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      height: 180px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chart-grid {
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(
-          rgba(255, 255, 255, 0.04) 1px,
-          transparent 1px
-        ),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 100% 24px, 32px 100%;
-      opacity: 0.4;
-    }
-
-    .chart-line {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 45, 45, 0.35)
-      );
-      mask-image: radial-gradient(circle at 0 100%, transparent 0, black 40%);
-      opacity: 0.9;
-      transform-origin: center;
-    }
-
-    .chart-label {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .order-panel {
-      border-radius: var(--radius-lg);
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 10px 10px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .order-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .order-field {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .order-input {
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: #050505;
-      padding: 6px 8px;
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-    }
-
-    .order-input::placeholder {
-      color: #555555;
-    }
-
-    .order-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .btn-buy {
-      background: #00d26a;
-      color: #000000;
-      border-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .btn-sell {
-      background: #ff2d2d;
-      color: #000000;
-      border-color: rgba(0, 0, 0, 0.4);
-    }
-
-    /* WALLET */
-
-    .wallet-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .list-placeholder {
-      border-radius: var(--radius-lg);
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-      min-height: 80px;
-    }
-
-    .list-placeholder-item {
-      padding: 4px 0;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
-    }
-
-    .list-placeholder-item:last-child {
-      border-bottom: none;
-    }
-
-    /* MT5 / API SECTION */
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #ffb347;
-      box-shadow: 0 0 0 4px rgba(255, 179, 71, 0.18);
-    }
-
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .signal-list {
-      margin-top: 6px;
-      display: grid;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .signal-item {
-      border-radius: 10px;
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 6px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .signal-symbol {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-main);
-    }
-
-    .signal-side {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      background: rgba(255, 45, 45, 0.16);
-      border: 1px solid rgba(255, 45, 45, 0.4);
-      color: #ffb3b3;
-    }
-
-    /* ACCOUNT / SETTINGS / ADMIN */
-
-    .account-card {
-      border-radius: var(--radius-lg);
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 10px;
-      display: grid;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .account-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .account-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .account-value {
-      font-size: 13px;
-      color: var(--text-main);
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .admin-card {
-      border-radius: var(--radius-md);
-      background: #111111;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .admin-title {
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 4px;
-      color: var(--text-main);
-    }
-
-    .admin-input {
-      width: 100%;
-      margin-top: 4px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: #050505;
-      padding: 5px 7px;
-      color: var(--text-main);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .admin-input::placeholder {
-      color: #555555;
-    }
-
-    /* BOTTOM NAV */
-
-    .bottom-nav {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: var(--nav-height);
-      background: rgba(5, 5, 5, 0.98);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 4px 4px 6px;
-      backdrop-filter: blur(16px);
-      z-index: 20;
-    }
-
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      cursor: pointer;
-      padding: 4px 0;
-      border-radius: 999px;
-      transition: color var(--transition-fast), background var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .nav-item-icon {
-      font-size: 16px;
-    }
-
-    .nav-item.active {
-      color: #ffffff;
-      background: rgba(255, 45, 45, 0.16);
-      transform: translateY(-1px);
-    }
-
-    /* DESKTOP WIDTH */
-
-    @media (min-width: 768px) {
-      .app-main {
-        max-width: 480px;
-        margin: 0 auto;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Traders | Professional B-Book Trading Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0a0a0b;
+            --bg-card: #141417;
+            --primary: #dc143c; /* Crimson */
+            --primary-hover: #ff1a4a;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 15%;
+            background: radial-gradient(circle at center, #1a0508 0%, #0a0a0b 100%);
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 20, 60, 0.3);
+        }
+
+        /* --- Live Feed Simulation --- */
+        .ticker-wrap {
+            width: 100%;
+            background: var(--bg-card);
+            border-y: 1px solid var(--border);
+            padding: 10px 0;
+            margin-top: 50px;
+        }
+
+        .ticker {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+
+        .up { color: #00ff88; }
+        .down { color: var(--primary); }
+
+        /* --- Features --- */
+        .features {
+            padding: 100px 8%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px);
+        }
+
+        .feature-card i {
+            font-size: 30px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 60px 8% 20px;
+            background: #050505;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-about h3 { color: var(--primary); margin-bottom: 20px; }
+        .footer-links h4 { margin-bottom: 20px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; }
+
+        .disclaimer {
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .nav-links { display: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="brand">
-        <div class="brand-logo">
-          <div class="brand-logo-inner">
-            <div class="brand-logo-mark">PT</div>
-          </div>
-          <div class="brand-logo-candle"></div>
+
+    <nav>
+        <div class="logo">Perfect Traders</div>
+        <ul class="nav-links">
+            <li><a href="#">Markets</a></li>
+            <li><a href="#">Platforms</a></li>
+            <li><a href="#">Education</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <button class="btn-login" onclick="location.href='/login'">Client Portal</button>
+    </nav>
+
+    <header class="hero">
+        <h1>Precision Trading, <br>Unmatched Execution.</h1>
+        <p>Experience institutional-grade liquidity and 0.0s execution on the world's most powerful B-Book trading engine.</p>
+        <button class="btn-primary" onclick="location.href='/register'">Open Live Account</button>
+        
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <span>EURUSD: <span class="up">1.0842 ▲</span></span>
+                <span>GBPUSD: <span class="down">1.2651 ▼</span></span>
+                <span>USDJPY: <span class="up">150.12 ▲</span></span>
+                <span>XAUUSD: <span class="up">2034.45 ▲</span></span>
+                <span>BTCUSD: <span class="down">62450.10 ▼</span></span>
+            </div>
         </div>
-        <div class="brand-text">
-          <div class="brand-name">Perfect Traders</div>
-          <div class="brand-tagline">Telegram Trading Desk</div>
-        </div>
-      </div>
-      <div class="app-header-right">
-        <div class="pill" id="userPill">
-          <div class="pill-dot"></div>
-          <span id="userNameLabel">Loading...</span>
-        </div>
-      </div>
     </header>
 
-    <!-- MAIN -->
-    <main class="app-main">
-      <!-- DASHBOARD SCREEN -->
-      <section class="screen active" id="screen-dashboard">
-        <div class="screen-title-row">
-          <div>
-            <div class="screen-title">Dashboard</div>
-            <div class="screen-subtitle">Overview of your Perfect Traders account.</div>
-          </div>
-          <div class="toggle-group" id="accountToggle">
-            <div class="toggle-option active" data-account="demo">Demo</div>
-            <div class="toggle-option" data-account="real">Real</div>
-          </div>
+    <section class="features">
+        <div class="feature-card">
+            <i class="fas fa-bolt"></i>
+            <h3>Instant Execution</h3>
+            <p>Our custom backend ensures trades are processed in milliseconds with zero rejection rates.</p>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="balance-label">Current Balance</div>
-              <div class="balance-main" id="balanceValue">$0.00</div>
-            </div>
-            <div class="card-tag" id="accountTypeLabel">Demo Account</div>
-          </div>
-          <div class="balance-row">
-            <span>Today P/L</span>
-            <span class="pnl-positive" id="pnlToday">+0.00%</span>
-          </div>
-          <div class="balance-row">
-            <span>Equity</span>
-            <span id="equityValue">$0.00</span>
-          </div>
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Negative Balance Protection</h3>
+            <p>Trade with peace of mind. Your losses will never exceed your account balance.</p>
         </div>
-
-        <div class="card-grid-3">
-          <div class="card">
-            <div class="card-title">Open Trades</div>
-            <div class="card-value" id="openTradesCount">0</div>
-            <div class="card-row">
-              <span>Placeholder</span>
-              <span>MT5 ready</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Win Rate</div>
-            <div class="card-value" id="winRate">0%</div>
-            <div class="card-row">
-              <span>Last 30 days</span>
-              <span>Signals</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Volume</div>
-            <div class="card-value" id="volumeValue">0.00</div>
-            <div class="card-row">
-              <span>Lots</span>
-              <span>Placeholder</span>
-            </div>
-          </div>
+        <div class="feature-card">
+            <i class="fas fa-chart-line"></i>
+            <h3>High Leverage</h3>
+            <p>Maximize your market exposure with flexible leverage up to 1:100 on major pairs.</p>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Performance</div>
-            <div class="card-tag">Placeholder</div>
-          </div>
-          <div class="card-row">
-            <span>Last 7 days P/L</span>
-            <span id="pnlWeek" class="pnl-positive">+0.00%</span>
-          </div>
-          <div class="card-row">
-            <span>Last 30 days P/L</span>
-            <span id="pnlMonth" class="pnl-positive">+0.00%</span>
-          </div>
+        <div class="feature-card">
+            <i class="fas fa-headset"></i>
+            <h3>24/7 Priority Support</h3>
+            <p>Our dedicated team is ready to assist you anytime, anywhere in the world.</p>
         </div>
-      </section>
+    </section>
 
-      <!-- TRADE SCREEN -->
-      <section class="screen" id="screen-trade">
-        <div class="screen-title-row">
-          <div>
-            <div class="screen-title">Trade</div>
-            <div class="screen-subtitle">Place orders using future MT5 connection.</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Symbols</div>
-            <div class="card-tag">Placeholders</div>
-          </div>
-          <div class="symbol-list" id="symbolList">
-            <!-- Placeholder symbols -->
-          </div>
-        </div>
-
-        <div class="chart-placeholder">
-          <div class="chart-grid"></div>
-          <div class="chart-line" id="chartLine"></div>
-          <div class="chart-label">Chart placeholder – MT5 data ready</div>
-        </div>
-
-        <div class="order-panel">
-          <div class="order-row">
-            <div class="order-field">
-              <span>Order Type</span>
-              <select class="order-input" id="orderType">
-                <option value="market">Market</option>
-                <option value="limit">Limit</option>
-                <option value="stop">Stop</option>
-              </select>
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h3>Perfect Traders</h3>
+                <p>Perfect-Traders.com is a leading provider of online trading services, offering a robust B-Book environment for serious retail traders.</p>
+                <p style="margin-top: 15px;"><i class="fas fa-envelope"></i> support@perfect-traders.com</p>
             </div>
-            <div class="order-field">
-              <span>Volume (Lots)</span>
-              <input class="order-input" id="orderVolume" type="number" step="0.01" placeholder="0.10" />
+            <div class="footer-links">
+                <h4>Trading</h4>
+                <ul>
+                    <li><a href="#">Forex Pairs</a></li>
+                    <li><a href="#">Commodities</a></li>
+                    <li><a href="#">Indices</a></li>
+                    <li><a href="#">Crypto</a></li>
+                </ul>
             </div>
-          </div>
-          <div class="order-row">
-            <div class="order-field">
-              <span>Take Profit</span>
-              <input class="order-input" id="orderTP" type="number" step="0.0001" placeholder="TP price" />
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Risk Disclosure</a></li>
+                    <li><a href="#">Anti-Money Laundering</a></li>
+                </ul>
             </div>
-            <div class="order-field">
-              <span>Stop Loss</span>
-              <input class="order-input" id="orderSL" type="number" step="0.0001" placeholder="SL price" />
-            </div>
-          </div>
-          <div class="order-actions">
-            <button class="btn btn-primary btn-buy" id="btnBuy">Buy</button>
-            <button class="btn btn-primary btn-sell" id="btnSell">Sell</button>
-          </div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
-            Orders are placeholders. MT5 execution and pricing will be connected via API later.
-          </div>
         </div>
-      </section>
-
-      <!-- WALLET SCREEN -->
-      <section class="screen" id="screen-wallet">
-        <div class="screen-title-row">
-          <div>
-            <div class="screen-title">Wallet</div>
-            <div class="screen-subtitle">Manage deposits, withdrawals and history (UI only).</div>
-          </div>
+        <div class="disclaimer">
+            Risk Warning: Trading Forex and CFDs involves significant risk and can result in the loss of your invested capital. You should not invest more than you can afford to lose. Please ensure you fully understand the risks involved before trading.
+            <br><br>
+            &copy; 2026 Perfect Traders. All rights reserved.
         </div>
+    </footer>
 
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Wallet Balance</div>
-            <div class="card-tag">Placeholder</div>
-          </div>
-          <div class="card-value" id="walletBalance">$0.00</div>
-          <div class="card-row">
-            <span>Available</span>
-            <span id="walletAvailable">$0.00</span>
-          </div>
-        </div>
-
-        <div class="wallet-actions">
-          <button class="btn btn-primary" id="btnDeposit">Deposit</button>
-          <button class="btn btn-outline" id="btnWithdraw">Withdraw</button>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Payment Methods</div>
-            <div class="card-tag">Placeholder</div>
-          </div>
-          <div class="list-placeholder">
-            <div class="list-placeholder-item">Card / Crypto / Local methods – to be added.</div>
-            <div class="list-placeholder-item">Payment provider integration placeholder.</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Transaction History</div>
-            <div class="card-tag">Placeholder</div>
-          </div>
-          <div class="list-placeholder">
-            <div class="list-placeholder-item">No transactions yet.</div>
-            <div class="list-placeholder-item">History will appear here after integration.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ACCOUNT SCREEN -->
-      <section class="screen" id="screen-account">
-        <div class="screen-title-row">
-          <div>
-            <div class="screen-title">Account</div>
-            <div class="screen-subtitle">Switch between demo and real account.</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Account Mode</div>
-            <div class="toggle-group" id="accountToggleSecondary">
-              <div class="toggle-option active" data-account="demo">Demo</div>
-              <div class="toggle-option" data-account="real">Real</div>
-            </div>
-          </div>
-          <div class="card-row">
-            <span>Single all-access account</span>
-            <span>No minimum deposit</span>
-          </div>
-        </div>
-
-        <div class="account-card">
-          <div class="account-row">
-            <div>
-              <div class="account-label">Current Mode</div>
-              <div class="account-value" id="accountModeLabel">Demo</div>
-            </div>
-            <div class="pill-small">Perfect All-Access</div>
-          </div>
-          <div class="account-row">
-            <div>
-              <div class="account-label">Balance</div>
-              <div class="account-value" id="accountBalanceLabel">$0.00</div>
-            </div>
-            <button class="btn btn-soft btn-sm" id="btnResetDemo">Reset Demo</button>
-          </div>
-          <div class="account-row">
-            <div>
-              <div class="account-label">MT5 Connection</div>
-              <div class="account-value">Not connected (placeholder)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">MT5 Integration Ready</div>
-            <div class="card-tag">Placeholder</div>
-          </div>
-          <div class="status-row">
-            <div class="status-dot"></div>
-            <span>MT5 / API connection endpoint to be configured.</span>
-          </div>
-          <div class="signal-list">
-            <div class="signal-item">
-              <div>
-                <div class="signal-symbol">XAUUSD</div>
-                <div style="font-size:11px;color:var(--text-muted);">Signal placeholder – Buy above 2300</div>
-              </div>
-              <div class="signal-side">BUY</div>
-            </div>
-            <div class="signal-item">
-              <div>
-                <div class="signal-symbol">EURUSD</div>
-                <div style="font-size:11px;color:var(--text-muted);">Signal placeholder – Sell below 1.0800</div>
-              </div>
-              <div class="signal-side">SELL</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SETTINGS / ADMIN SCREEN -->
-      <section class="screen" id="screen-settings">
-        <div class="screen-title-row">
-          <div>
-            <div class="screen-title">Settings & Admin</div>
-            <div class="screen-subtitle">Basic manager panel UI (placeholders).</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Manager / Admin Panel</div>
-            <div class="card-tag">UI only</div>
-          </div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
-            Use this layout later to manage users, balances and account status via backend.
-          </div>
-          <div class="admin-grid">
-            <div class="admin-card">
-              <div class="admin-title">View Users</div>
-              <div>Placeholder list of users.</div>
-              <input class="admin-input" placeholder="Search user ID / username" />
-            </div>
-            <div class="admin-card">
-              <div class="admin-title">Edit Balance</div>
-              <div>Adjust user balance (placeholder).</div>
-              <input class="admin-input" placeholder="Amount" />
-            </div>
-            <div class="admin-card">
-              <div class="admin-title">Enable / Disable</div>
-              <div>Toggle account status (placeholder).</div>
-              <button class="btn btn-soft btn-sm" style="margin-top:4px;">Toggle Status</button>
-            </div>
-            <div class="admin-card">
-              <div class="admin-title">Signals Control</div>
-              <div>Enable / pause signals for user.</div>
-              <button class="btn btn-soft btn-sm" style="margin-top:4px;">Pause Signals</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="account-card">
-          <div class="account-row">
-            <div>
-              <div class="account-label">Theme</div>
-              <div class="account-value">Dark (Perfect Traders)</div>
-            </div>
-          </div>
-          <div class="account-row">
-            <div>
-              <div class="account-label">Telegram</div>
-              <div class="account-value">@perfecttradersbot</div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-      <div class="nav-item active" data-screen="dashboard">
-        <div class="nav-item-icon">🏠</div>
-        <div>Dashboard</div>
-      </div>
-      <div class="nav-item" data-screen="trade">
-        <div class="nav-item-icon">📈</div>
-        <div>Trade</div>
-      </div>
-      <div class="nav-item" data-screen="wallet">
-        <div class="nav-item-icon">💼</div>
-        <div>Wallet</div>
-      </div>
-      <div class="nav-item" data-screen="account">
-        <div class="nav-item-icon">👤</div>
-        <div>Account</div>
-      </div>
-      <div class="nav-item" data-screen="settings">
-        <div class="nav-item-icon">⚙️</div>
-        <div>Settings</div>
-      </div>
-    </nav>
-  </div>
-
-  <script>
-    /*
-      Suggested folder structure for production:
-      /perfect-traders-miniapp
-        index.html
-        /assets
-          /css
-            styles.css
-          /js
-            app.js
-            ui.js
-            state.js
-            telegram.js
-    */
-
-    // GLOBAL STATE (simple, extendable)
-    const AppState = {
-      accountMode: "demo", // "demo" | "real"
-      balances: {
-        demo: 10000,
-        real: 0
-      },
-      user: {
-        id: null,
-        name: "Trader"
-      },
-      selectedSymbol: "XAUUSD"
-    };
-
-    // TELEGRAM WEBAPP INITIALIZATION
-    const TelegramApp = (function () {
-      let tg = null;
-
-      function init() {
-        if (window.Telegram && window.Telegram.WebApp) {
-          tg = window.Telegram.WebApp;
-          tg.ready();
-          tg.expand();
-
-          const initDataUnsafe = tg.initDataUnsafe || {};
-          if (initDataUnsafe.user) {
-            AppState.user.id = initDataUnsafe.user.id;
-            AppState.user.name =
-              initDataUnsafe.user.first_name ||
-              initDataUnsafe.user.username ||
-              "Trader";
-          }
-
-          updateUserPill();
-        } else {
-          // Fallback for local testing
-          AppState.user.name = "Perfect Trader";
-          updateUserPill();
-        }
-      }
-
-      function showAlert(message) {
-        if (tg && tg.showAlert) {
-          tg.showAlert(message);
-        } else {
-          alert(message);
-        }
-      }
-
-      function updateUserPill() {
-        const label = document.getElementById("userNameLabel");
-        if (label) {
-          label.textContent = AppState.user.name;
-        }
-      }
-
-      return {
-        init,
-        showAlert
-      };
-    })();
-
-    // UI MODULE
-    const UI = (function () {
-      const screens = {
-        dashboard: document.getElementById("screen-dashboard"),
-        trade: document.getElementById("screen-trade"),
-        wallet: document.getElementById("screen-wallet"),
-        account: document.getElementById("screen-account"),
-        settings: document.getElementById("screen-settings")
-      };
-
-      function switchScreen(name) {
-        Object.keys(screens).forEach((key) => {
-          if (screens[key]) {
-            screens[key].classList.toggle("active", key === name);
-          }
-        });
-
-        document.querySelectorAll(".nav-item").forEach((item) => {
-          const screen = item.getAttribute("data-screen");
-          item.classList.toggle("active", screen === name);
-        });
-      }
-
-      function updateAccountUI() {
-        const mode = AppState.accountMode;
-        const balance = AppState.balances[mode] || 0;
-
-        const balanceValue = document.getElementById("balanceValue");
-        const equityValue = document.getElementById("equityValue");
-        const accountTypeLabel = document.getElementById("accountTypeLabel");
-        const accountModeLabel = document.getElementById("accountModeLabel");
-        const accountBalanceLabel = document.getElementById("accountBalanceLabel");
-        const walletBalance = document.getElementById("walletBalance");
-        const walletAvailable = document.getElementById("walletAvailable");
-
-        if (balanceValue) balanceValue.textContent = "$" + balance.toFixed(2);
-        if (equityValue) equityValue.textContent = "$" + balance.toFixed(2);
-        if (accountTypeLabel)
-          accountTypeLabel.textContent =
-            mode === "demo" ? "Demo Account" : "Real Account";
-        if (accountModeLabel)
-          accountModeLabel.textContent = mode === "demo" ? "Demo" : "Real";
-        if (accountBalanceLabel)
-          accountBalanceLabel.textContent = "$" + balance.toFixed(2);
-        if (walletBalance) walletBalance.textContent = "$" + balance.toFixed(2);
-        if (walletAvailable) walletAvailable.textContent = "$" + balance.toFixed(2);
-
-        document.querySelectorAll("[data-account]").forEach((el) => {
-          const value = el.getAttribute("data-account");
-          el.classList.toggle("active", value === mode);
-        });
-      }
-
-      function initSymbols() {
-        const list = document.getElementById("symbolList");
-        if (!list) return;
-        const symbols = [
-          "XAUUSD",
-          "EURUSD",
-          "BTCUSD",
-          "US30",
-          "NAS100",
-          "GBPUSD"
-        ];
-        list.innerHTML = "";
-        symbols.forEach((sym, index) => {
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className =
-            "symbol-chip" + (index === 0 ? " active" : "");
-          chip.setAttribute("data-symbol", sym);
-          chip.innerHTML =
-            "<span>" +
-            sym +
-            "</span><span class='symbol-price'>--.--</span>";
-          chip.addEventListener("click", () => {
-            AppState.selectedSymbol = sym;
-            document
-              .querySelectorAll(".symbol-chip")
-              .forEach((c) => c.classList.remove("active"));
-            chip.classList.add("active");
-          });
-          list.appendChild(chip);
-        });
-      }
-
-      function initNav() {
-        document.querySelectorAll(".nav-item").forEach((item) => {
-          item.addEventListener("click", () => {
-            const screen = item.getAttribute("data-screen");
-            switchScreen(screen);
-          });
-        });
-      }
-
-      function initAccountToggles() {
-        const primary = document.getElementById("accountToggle");
-        const secondary = document.getElementById("accountToggleSecondary");
-
-        function handleToggleClick(e) {
-          const target = e.target.closest(".toggle-option");
-          if (!target) return;
-          const mode = target.getAttribute("data-account");
-          if (!mode) return;
-          AppState.accountMode = mode;
-          updateAccountUI();
-        }
-
-        if (primary) {
-          primary.addEventListener("click", handleToggleClick);
-        }
-        if (secondary) {
-          secondary.addEventListener("click", handleToggleClick);
-        }
-      }
-
-      function initOrderButtons() {
-        const buyBtn = document.getElementById("btnBuy");
-        const sellBtn = document.getElementById("btnSell");
-
-        function handleOrder(side) {
-          const symbol = AppState.selectedSymbol;
-          const mode = AppState.accountMode;
-          const volume = parseFloat(
-            document.getElementById("orderVolume").value || "0"
-          );
-          const tp = document.getElementById("orderTP").value || "--";
-          const sl = document.getElementById("orderSL").value || "--";
-          const type = document.getElementById("orderType").value;
-
-          const msg =
-            "Order placeholder:\n" +
-            "Side: " +
-            side.toUpperCase() +
-            "\n" +
-            "Symbol: " +
-            symbol +
-            "\n" +
-            "Mode: " +
-            mode.toUpperCase() +
-            "\n" +
-            "Type: " +
-            type +
-            "\n" +
-            "Volume: " +
-            volume.toFixed(2) +
-            "\n" +
-            "TP: " +
-            tp +
-            "\n" +
-            "SL: " +
-            sl +
-            "\n\n" +
-            "MT5 execution will be connected later.";
-          TelegramApp.showAlert(msg);
-        }
-
-        if (buyBtn) {
-          buyBtn.addEventListener("click", () => handleOrder("buy"));
-        }
-        if (sellBtn) {
-          sellBtn.addEventListener("click", () => handleOrder("sell"));
-        }
-      }
-
-      function initWalletButtons() {
-        const depositBtn = document.getElementById("btnDeposit");
-        const withdrawBtn = document.getElementById("btnWithdraw");
-
-        if (depositBtn) {
-          depositBtn.addEventListener("click", () => {
-            TelegramApp.showAlert(
-              "Deposit placeholder.\nPayment systems will be integrated later."
-            );
-          });
-        }
-        if (withdrawBtn) {
-          withdrawBtn.addEventListener("click", () => {
-            TelegramApp.showAlert(
-              "Withdraw placeholder.\nPayout systems will be integrated later."
-            );
-          });
-        }
-      }
-
-      function initAccountActions() {
-        const resetDemoBtn = document.getElementById("btnResetDemo");
-        if (resetDemoBtn) {
-          resetDemoBtn.addEventListener("click", () => {
-            AppState.balances.demo = 10000;
-            AppState.accountMode = "demo";
-            updateAccountUI();
-            TelegramApp.showAlert("Demo balance reset to $10,000.");
-          });
-        }
-      }
-
-      function animateChart() {
-        const line = document.getElementById("chartLine");
-        if (!line) return;
-        let offset = 0;
-        function step() {
-          offset += 0.4;
-          line.style.transform =
-            "translateX(" + Math.sin(offset / 20) * 6 + "px)";
-          requestAnimationFrame(step);
-        }
-        step();
-      }
-
-      function init() {
-        initNav();
-        initSymbols();
-        initAccountToggles();
-        initOrderButtons();
-        initWalletButtons();
-        initAccountActions();
-        updateAccountUI();
-        animateChart();
-      }
-
-      return {
-        init,
-        updateAccountUI
-      };
-    })();
-
-    // APP INIT
-    document.addEventListener("DOMContentLoaded", function () {
-      TelegramApp.init();
-      UI.init();
-    });
-  </script>
 </body>
 </html>
